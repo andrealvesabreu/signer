@@ -1,0 +1,22 @@
+{
+	"autoload" : {
+		"psr-4" : {
+			"Inspire\\Signer\\" : "src"
+		}
+	},
+	"name" : "inspire/signer",
+	"type" : "library",
+	"description" : "Basic URL and request signer",
+	"license" : "MIT",
+	"require" : {
+		"php" : ">=7.4",
+		"spatie/url-signer" : "~1.2",
+		"inspire/support" : "~0.1",
+		"phpseclib/phpseclib" : "~3.0"
+	},
+	"authors" : [{
+			"name" : "André Alves",
+			"email" : "aluisalves0@gmail.com"
+		}
+	]
+}
