@@ -15,7 +15,7 @@ echo "MD2 SIGNED {$signature} " . (BaseSigner::with('md2')->validate($message, $
 $signature = BaseSigner::with('md4')->sign($message, $pass);
 echo "MD4 SIGNED {$signature}\n";
 echo "MD4 SIGNED {$signature} " . (BaseSigner::with('md4')->validate($message, $signature, $pass) ? "IS VALID" : "ISN'T VALID ANYMORE") . "\n";
-exit();
+
 // Trying MD5
 $signature = BaseSigner::with('md5')->sign($message, $pass);
 echo "MD5 SIGNED {$signature}\n";

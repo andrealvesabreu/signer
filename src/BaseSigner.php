@@ -5,7 +5,6 @@ namespace Inspire\Signer;
 use League\Uri\QueryString;
 use Psr\Http\Message\UriInterface;
 use League\Uri\Http;
-use Spatie\UrlSigner\Exceptions\InvalidExpiration;
 
 /**
  * Description of MD5Signer
@@ -108,7 +107,7 @@ abstract class BaseSigner
      *
      * @param string $url
      * @param \DateTime|int $expiration
-     * @throws InvalidExpiration
+     * @throws \Exception
      * @return string
      */
     public function signUrl(string $url, $expiration, ?string $key, ?string $signParam = null): string
@@ -215,26 +214,25 @@ abstract class BaseSigner
      *            - DateTime: The value will be used as expiration date
      *            - int: The expiration time will be set to X days from now
      *            
-     * @throws \Spatie\UrlSigner\Exceptions\InvalidExpiration
+     * @throws \Exception
      *
      * @return string
      */
-    protected function getExpirationTimestamp($expiration)
+    protected function getExpirationTimestamp($expiration): string
     {
-        if (is_int($expiration)) {
+        if ($expiration instanceof \DateTime) {
+            $expiration = $expiration->getTimestamp();
+        } else if (is_int($expiration)) {
             if ($expiration < 365) {
-                $expiration = (new \DateTime())->modify((int) $expiration . ' days');
-            } else {
-                $expiration = (new \DateTime());
+                $expiration = (new \DateTime())->modify((int) $expiration . ' days')->getTimestamp();
             }
+        } else {
+            throw new \Exception('Expiration date must be an instance of DateTime or an integer');
         }
-        if (! $expiration instanceof \DateTime) {
-            throw new InvalidExpiration('Expiration date must be an instance of DateTime or an integer');
+        if (! $this->isFuture($expiration)) {
+            throw new \Exception('Expiration date must be in the future');
         }
-        if (! $this->isFuture($expiration->getTimestamp())) {
-            throw new InvalidExpiration('Expiration date must be in the future');
-        }
-        return (string) $expiration->getTimestamp();
+        return (string) $expiration;
     }
 
     /**
@@ -260,7 +258,7 @@ abstract class BaseSigner
      */
     protected function isFuture($timestamp)
     {
-        return ((int) $timestamp) >= (new \DateTime())->getTimestamp();
+        return ((int) $timestamp) >= time();
     }
 
     /**
@@ -270,9 +268,8 @@ abstract class BaseSigner
     /**
      * Get a secure URL to a controller action.
      *
-     * @param string $url
-     * @param \DateTime|int $expiration
-     * @throws InvalidExpiration
+     * @param string $message
+     * @param string $key
      * @return string
      */
     public function sign(string $message, ?string $key = null): string

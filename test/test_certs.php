@@ -25,7 +25,7 @@ $pass = 'fkasldkjghajlkshgd';
 // Trying RS256
 $signed = BaseSigner::with('rs256', [
     'key' => __DIR__ . '/certs/key.pem'
-])->signUrl($url, time() + 2, $pass);
+])->signUrl($url, time() + 1, $pass);
 echo "RS256 SIGNED {$signed}\n";
 echo "RS256 SIGNED {$signed} " . (BaseSigner::with('rs256', [
     'pub' => __DIR__ . '/certs/cert.pem'
@@ -38,7 +38,7 @@ echo "RS256 SIGNED {$signed} " . (BaseSigner::with('rs256', [
 // Trying RS384
 $signed = BaseSigner::with('rs384', [
     'key' => __DIR__ . '/certs/key.pem'
-])->signUrl($url, time() + 2, $pass);
+])->signUrl($url, time() + 1, $pass);
 echo "RS384 SIGNED {$signed}\n";
 echo "RS384 SIGNED {$signed} " . (BaseSigner::with('rs384', [
     'pub' => __DIR__ . '/certs/cert.pem'
@@ -51,7 +51,7 @@ echo "RS384 SIGNED {$signed} " . (BaseSigner::with('rs384', [
 // Trying RS512
 $signed = BaseSigner::with('rs512', [
     'key' => __DIR__ . '/certs/key.pem'
-])->signUrl($url, time() + 2, $pass);
+])->signUrl($url, time() + 1, $pass);
 echo "RS512 SIGNED {$signed}\n";
 echo "RS512 SIGNED {$signed} " . (BaseSigner::with('rs512', [
     'pub' => __DIR__ . '/certs/cert.pem'
@@ -64,7 +64,7 @@ echo "RS512 SIGNED {$signed} " . (BaseSigner::with('rs512', [
 // Trying ES256
 $signed = BaseSigner::with('es256', [
     'key' => __DIR__ . '/certs/ec_private.pem'
-])->signUrl($url, time() + 2, $pass);
+])->signUrl($url, time() + 1, $pass);
 echo "ES256 SIGNED {$signed}\n";
 echo "ES256 SIGNED {$signed} " . (BaseSigner::with('es256', [
     'pub' => __DIR__ . '/certs/ec_public.pem'
@@ -77,7 +77,7 @@ echo "ES256 SIGNED {$signed} " . (BaseSigner::with('es256', [
 // Trying ES384
 $signed = BaseSigner::with('es384', [
     'key' => __DIR__ . '/certs/ec_private.pem'
-])->signUrl($url, time() + 2, $pass);
+])->signUrl($url, time() + 1, $pass);
 echo "ES384 SIGNED {$signed}\n";
 echo "ES384 SIGNED {$signed} " . (BaseSigner::with('es384', [
     'pub' => __DIR__ . '/certs/ec_public.pem'
@@ -90,7 +90,7 @@ echo "ES384 SIGNED {$signed} " . (BaseSigner::with('es384', [
 // Trying ES512
 $signed = BaseSigner::with('es512', [
     'key' => __DIR__ . '/certs/ec_private.pem'
-])->signUrl($url, time() + 2, $pass);
+])->signUrl($url, time() + 1, $pass);
 echo "ES512 SIGNED {$signed}\n";
 echo "ES512 SIGNED {$signed} " . (BaseSigner::with('es512', [
     'pub' => __DIR__ . '/certs/ec_public.pem'
@@ -103,7 +103,7 @@ echo "ES512 SIGNED {$signed} " . (BaseSigner::with('es512', [
 // Trying PS256
 $signed = BaseSigner::with('ps256', [
     'key' => __DIR__ . '/certs/rsa_pss_pri.pem'
-])->signUrl($url, time() + 2, $pass);
+])->signUrl($url, time() + 1, $pass);
 echo "PS256 SIGNED {$signed}\n";
 echo "PS256 SIGNED {$signed} " . (BaseSigner::with('ps256', [
     'pub' => __DIR__ . '/certs/rsa_pss_pub.pem'
@@ -116,7 +116,7 @@ echo "PS256 SIGNED {$signed} " . (BaseSigner::with('ps256', [
 // Trying PS384
 $signed = BaseSigner::with('ps384', [
     'key' => __DIR__ . '/certs/rsa_pss_pri.pem'
-])->signUrl($url, time() + 2, $pass);
+])->signUrl($url, time() + 1, $pass);
 echo "PS384 SIGNED {$signed}\n";
 echo "PS384 SIGNED {$signed} " . (BaseSigner::with('ps384', [
     'pub' => __DIR__ . '/certs/rsa_pss_pub.pem'
@@ -129,7 +129,7 @@ echo "PS384 SIGNED {$signed} " . (BaseSigner::with('ps384', [
 // Trying PS512
 $signed = BaseSigner::with('ps512', [
     'key' => __DIR__ . '/certs/rsa_pss_pri.pem'
-])->signUrl($url, time() + 2, $pass);
+])->signUrl($url, time() + 1, $pass);
 echo "PS512 SIGNED {$signed}\n";
 echo "PS512 SIGNED {$signed} " . (BaseSigner::with('ps512', [
     'pub' => __DIR__ . '/certs/rsa_pss_pub.pem'
