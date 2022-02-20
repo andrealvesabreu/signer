@@ -5,6 +5,7 @@ namespace Inspire\Signer;
 use League\Uri\QueryString;
 use Psr\Http\Message\UriInterface;
 use League\Uri\Http;
+use Inspire\Signer\Factories\SignerFactory;
 
 /**
  * Description of MD5Signer
@@ -43,13 +44,6 @@ abstract class BaseSigner
     protected string $signatureKey = '';
 
     /**
-     * Algorithm to use in signature
-     *
-     * @var string|NULL
-     */
-    protected ?string $algorithm = null;
-
-    /**
      * Extra config
      *
      * @var mixed
@@ -59,14 +53,13 @@ abstract class BaseSigner
     /**
      * Create a signer object with provided configuration
      *
-     * @param string $algFamily
-     * @param string $algVersion
-     * @param mixed $extra
+     * @param string $name
+     * @param array $cfg
      * @return BaseSigner
      */
-    public static function with(string $algorithm, $extra = null): BaseSigner
+    public static function with(string $name, ?array $cfg = null): BaseSigner
     {
-        return SignerFactory::create($algorithm, $extra);
+        return SignerFactory::create($name, $cfg);
     }
 
     /**
@@ -89,13 +82,12 @@ abstract class BaseSigner
 
     /**
      *
-     * @param string $algVersion
-     * @param mixed $extra
+     * @param array $config
      */
-    public function __construct(string $algVersion, $extra)
+    public function __construct(array $config)
     {
-        $this->algorithm = strtoupper($algVersion);
-        $this->config = $extra;
+        $this->config = $config;
+        $this->signatureKey = $this->config['key'] ?? '';
     }
 
     /**
@@ -110,14 +102,13 @@ abstract class BaseSigner
      * @throws \Exception
      * @return string
      */
-    public function signUrl(string $url, $expiration, ?string $key, ?string $signParam = null): string
+    public function signUrl(string $url, $expiration, ?string $signParam = null): string
     {
         $url = Http::createFromString($url);
         $expiration = $this->getExpirationTimestamp($expiration);
         /**
          * Generate URL signature
          */
-        $this->signatureKey = $key ?? $this->signatureKey;
         $signature = $this->createSignature("{$url}::{$expiration}::{$this->signatureKey}");
 
         $query = QueryString::extract($url->getQuery());
@@ -162,9 +153,8 @@ abstract class BaseSigner
      * @param string $signParam
      * @return boolean
      */
-    public function validateUrl(string $url, ?string $key = null, ?string $signParam = null)
+    public function validateUrl(string $url, ?string $signParam = null)
     {
-        $this->signatureKey = $key ?? $this->signatureKey;
         $this->signParam = $signParam ?? $this->signParam;
         $url = Http::createFromString($url);
         $query = QueryString::extract($url->getQuery());
@@ -272,12 +262,11 @@ abstract class BaseSigner
      * @param string $key
      * @return string
      */
-    public function sign(string $message, ?string $key = null): string
+    public function sign(string $message): string
     {
         /**
          * Generate message signature
          */
-        $this->signatureKey = $key ?? $this->signatureKey;
         return $this->createSignature("{$message}::{$this->signatureKey}");
     }
 
@@ -289,9 +278,8 @@ abstract class BaseSigner
      * @param string $signParam
      * @return boolean
      */
-    public function validate(string $message, string $providedSignature, ?string $key = null)
+    public function validate(string $message, string $providedSignature)
     {
-        $this->signatureKey = $key ?? $this->signatureKey;
         return $this->hasValidSignature("{$message}::{$this->signatureKey}", $providedSignature, null);
     }
 }

@@ -20,22 +20,22 @@ class PSSigner extends BaseSigner
      */
     protected function createSignature(string $message): string
     {
-        if (! isset($this->config['key'])) {
+        if (! isset($this->config['pri_file'])) {
             throw new \Exception("Error. You must provide a private key file.");
-        } else if (! file_exists($this->config['key'])) {
+        } else if (! file_exists($this->config['pri_file'])) {
             throw new \Exception("Error. The private key file does not exists.");
         }
-        $private_key = file_get_contents($this->config['key']);
+        $private_key = file_get_contents($this->config['pri_file']);
         $private = PrivateKey::load($private_key)->withPadding(PrivateKey::SIGNATURE_PSS);
-        switch ($this->algorithm) {
+        switch ($this->config['version']) {
             /**
              * Signing with PS algorithm
              */
-            case 'PS256':
-            case 'PS384':
-            case 'PS512':
-                return base64_encode($private->withHash(str_replace('PS', 'sha', $this->algorithm))
-                    ->withMGFHash(str_replace('PS', 'sha', $this->algorithm))
+            case '256':
+            case '384':
+            case '512':
+                return base64_encode($private->withHash("sha{$this->config['version']}")
+                    ->withMGFHash("sha{$this->config['version']}")
                     ->sign($message));
                 break;
             /**
@@ -55,22 +55,22 @@ class PSSigner extends BaseSigner
      */
     protected function hasValidSignature(string $message, string $providedSignature): bool
     {
-        if (! isset($this->config['pub'])) {
+        if (! isset($this->config['pub_file'])) {
             throw new \Exception("Error. You must provide a private key file.");
-        } else if (! file_exists($this->config['pub'])) {
+        } else if (! file_exists($this->config['pub_file'])) {
             throw new \Exception("Error. The private key file does not exists.");
         }
-        $public_key = file_get_contents($this->config['pub']);
+        $public_key = file_get_contents($this->config['pub_file']);
         $key = PublicKeyLoader::load($public_key)->withPadding(PrivateKey::SIGNATURE_PSS);
-        switch ($this->algorithm) {
+        switch ($this->config['version']) {
             /**
              * Checking PS signature
              */
-            case 'PS256':
-            case 'PS384':
-            case 'PS512':
-                return $key->withHash(str_replace('PS', 'sha', $this->algorithm))
-                    ->withMGFHash(str_replace('PS', 'sha', $this->algorithm))
+            case '256':
+            case '384':
+            case '512':
+                return $key->withHash("sha{$this->config['version']}")
+                    ->withMGFHash("sha{$this->config['version']}")
                     ->verify($message, base64_decode($providedSignature));
             /**
              * Invalid algorithm

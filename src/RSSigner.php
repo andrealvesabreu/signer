@@ -17,30 +17,30 @@ class RSSigner extends BaseSigner
      */
     protected function createSignature(string $message): string
     {
-        if (! isset($this->config['key'])) {
+        if (! isset($this->config['pri_file'])) {
             throw new \Exception("Error. You must provide a private key file.");
-        } else if (! file_exists($this->config['key'])) {
+        } else if (! file_exists($this->config['pri_file'])) {
             throw new \Exception("Error. The private key file does not exists.");
         }
-        $private_key = file_get_contents($this->config['key']);
+        $private_key = file_get_contents($this->config['pri_file']);
         $binary_signature = "";
-        switch ($this->algorithm) {
+        switch ($this->config['version']) {
             /**
              * Signing with RS256
              */
-            case 'RS256':
+            case '256':
                 openssl_sign($message, $binary_signature, $private_key, OPENSSL_ALGO_SHA256);
                 break;
             /**
              * Signing with RS384
              */
-            case 'RS384':
+            case '384':
                 openssl_sign($message, $binary_signature, $private_key, OPENSSL_ALGO_SHA384);
                 break;
             /**
              * Signing with RS512
              */
-            case 'RS512':
+            case '512':
                 openssl_sign($message, $binary_signature, $private_key, OPENSSL_ALGO_SHA512);
                 break;
             /**
@@ -61,27 +61,27 @@ class RSSigner extends BaseSigner
      */
     protected function hasValidSignature(string $message, string $providedSignature): bool
     {
-        if (! isset($this->config['pub'])) {
+        if (! isset($this->config['pub_file'])) {
             throw new \Exception("Error. You must provide a private key file.");
-        } else if (! file_exists($this->config['pub'])) {
+        } else if (! file_exists($this->config['pub_file'])) {
             throw new \Exception("Error. The private key file does not exists.");
         }
-        $public_key = file_get_contents($this->config['pub']);
-        switch ($this->algorithm) {
+        $public_key = file_get_contents($this->config['pub_file']);
+        switch ($this->config['version']) {
             /**
              * Checking RS256 signature
              */
-            case 'RS256':
+            case '256':
                 return openssl_verify($message, base64_decode($providedSignature), $public_key, OPENSSL_ALGO_SHA256) == 1;
             /**
              * Checking RS384 signature
              */
-            case 'RS384':
+            case '384':
                 return openssl_verify($message, base64_decode($providedSignature), $public_key, OPENSSL_ALGO_SHA384) == 1;
             /**
              * Checking RS512 signature
              */
-            case 'RS512':
+            case '512':
                 return openssl_verify($message, base64_decode($providedSignature), $public_key, OPENSSL_ALGO_SHA512) == 1;
             /**
              * Invalid algorithm

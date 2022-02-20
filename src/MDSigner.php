@@ -17,17 +17,17 @@ class MDSigner extends BaseSigner
      */
     protected function createSignature(string $message): string
     {
-        if (empty($this->signatureKey)) {
+        if (empty($this->config['key'])) {
             throw new \Exception("Error. You must provide a signature key if you are using a signature without certificate.");
         }
-        switch ($this->algorithm) {
+        switch ($this->config['version']) {
             /**
              * Hashing with SHA1
              */
-            case 'MD2':
-            case 'MD4':
-            case 'MD5':
-                return hash(strtolower($this->algorithm), $message);
+            case '2':
+            case '4':
+            case '5':
+                return hash("md{$this->config['version']}", $message);
             /**
              * Invalid algorithm
              */

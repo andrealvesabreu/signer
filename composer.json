@@ -10,10 +10,10 @@
 	"license" : "MIT",
 	"require" : {
 		"php" : ">=7.4",
-		"inspire/support" : "~0.1",
 		"phpseclib/phpseclib" : "~3.0",
 		"league/uri" : "~6.5",
-		"league/uri-components" : "~2.4"
+		"league/uri-components" : "~2.4",
+		"inspire/config" : "~0.1"
 	},
 	"authors" : [{
 			"name" : "André Alves",

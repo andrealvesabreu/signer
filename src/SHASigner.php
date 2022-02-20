@@ -20,20 +20,20 @@ class SHASigner extends BaseSigner
         if (empty($this->signatureKey)) {
             throw new \Exception("Error. You must provide a signature key if you are using a signature without certificate.");
         }
-        switch ($this->algorithm) {
+        switch ($this->config['version']) {
             /**
              * Hashing with SHA algorithms
              */
-            case 'SHA1':
-            case 'SHA256':
-            case 'SHA384':
-            case 'SHA512':
-                return hash(strtolower($this->algorithm), $message);
+            case '1':
+            case '256':
+            case '384':
+            case '512':
+                return hash("sha{$this->config['version']}", $message);
             /**
              * Invalid algorithm
              */
             default:
-                throw new \Exception("Error. Invalid SHA algorithm. {$this->algorithm} is not a valid SHA.");
+                throw new \Exception("Error. Invalid SHA algorithm. {$this->config['version']} is not a valid SHA.");
         }
     }
 

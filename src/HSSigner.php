@@ -20,19 +20,19 @@ class HSSigner extends BaseSigner
         if (empty($this->signatureKey)) {
             throw new \Exception("Error. You must provide a signature key if you are using a signature without certificate.");
         }
-        switch ($this->algorithm) {
+        switch ($this->config['version']) {
             /**
              * Hashing with SHA1
              */
-            case 'HS256':
-            case 'HS384':
-            case 'HS512':
-                return hash_hmac(str_replace('HS', 'sha', $this->algorithm), $message, $this->signatureKey);
+            case '256':
+            case '384':
+            case '512':
+                return hash_hmac("sha{$this->config['version']}", $message, $this->signatureKey);
             /**
              * Invalid algorithm
              */
             default:
-                throw new \Exception("Error. Invalid HS algorithm. {$this->algorithm} is not a valid HS{256,384,512}.");
+                throw new \Exception("Error. Invalid HS algorithm. {$this->config['version']} is not a valid HS{256,384,512}.");
         }
     }
 
