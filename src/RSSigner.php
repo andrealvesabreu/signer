@@ -61,7 +61,9 @@ class RSSigner extends BaseSigner
      */
     protected function hasValidSignature(string $message, string $providedSignature): bool
     {
-        if (! isset($this->config['pub_file'])) {
+        if (! preg_match('%^[a-zA-Z0-9/+]*={0,2}$%', $providedSignature)) {
+            throw new \Exception("Error. Invalid signature format.");
+        } else if (! isset($this->config['pub_file'])) {
             throw new \Exception("Error. You must provide a private key file.");
         } else if (! file_exists($this->config['pub_file'])) {
             throw new \Exception("Error. The private key file does not exists.");

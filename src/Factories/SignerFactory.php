@@ -75,7 +75,7 @@ final class SignerFactory
         if (! class_exists($class)) {
             throw new \Exception("Error. {$class} signer does not exists.");
         }
-        self::$instances[$name] = new $class($exists);
+        self::$instances[$name] = new $class($exists, $name);
         return self::$instances[$name];
     }
 }

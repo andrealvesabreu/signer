@@ -10,96 +10,96 @@ Config::loadFromFile('config/signer.php', true);
 // Trying MD2
 $signature = BaseSigner::with('md2')->sign($message);
 echo "MD2 SIGNED {$signature}\n";
-echo "MD2 SIGNED {$signature} " . (BaseSigner::with('md2')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "MD2 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 // Trying MD4
 $signature = BaseSigner::with('md4')->sign($message);
 echo "MD4 SIGNED {$signature}\n";
-echo "MD4 SIGNED {$signature} " . (BaseSigner::with('md4')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "MD4 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying MD5
 $signature = BaseSigner::with('md5')->sign($message);
 echo "MD5 SIGNED {$signature}\n";
-echo "MD5 SIGNED {$signature} " . (BaseSigner::with('md5')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "MD5 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying SHA1
 $signature = BaseSigner::with('sha1')->sign($message);
 echo "SHA1 SIGNED {$signature}\n";
-echo "SHA1 SIGNED {$signature} " . (BaseSigner::with('sha1')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "SHA1 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying SHA256
 $signature = BaseSigner::with('sha256')->sign($message);
 echo "SHA256 SIGNED {$signature}\n";
-echo "SHA256 SIGNED {$signature} " . (BaseSigner::with('sha256')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "SHA256 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying SHA384
 $signature = BaseSigner::with('sha384')->sign($message);
 echo "SHA384 SIGNED {$signature}\n";
-echo "SHA384 SIGNED {$signature} " . (BaseSigner::with('sha384')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "SHA384 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying SHA512
 $signature = BaseSigner::with('sha512')->sign($message);
 echo "SHA512 SIGNED {$signature}\n";
-echo "SHA512 SIGNED {$signature} " . (BaseSigner::with('sha512')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "SHA512 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying HS256
 $signature = BaseSigner::with('hs256')->sign($message);
 echo "HS256 SIGNED {$signature}\n";
-echo "HS256 SIGNED {$signature} " . (BaseSigner::with('hs256')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "HS256 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying HS384
 $signature = BaseSigner::with('hs384')->sign($message);
 echo "HS384 SIGNED {$signature}\n";
-echo "HS384 SIGNED {$signature} " . (BaseSigner::with('hs384')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "HS384 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying HS512
 $signature = BaseSigner::with('hs512')->sign($message);
 echo "HS512 SIGNED {$signature}\n";
-echo "HS512 SIGNED {$signature} " . (BaseSigner::with('hs512')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "HS512 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying RS256
 $signature = BaseSigner::with('rs256')->sign($message);
 echo "RS256 SIGNED {$signature}\n";
-echo "RS256 SIGNED {$signature} " . (BaseSigner::with('rs256')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "RS256 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying RS384
 $signature = BaseSigner::with('rs384')->sign($message);
 echo "RS384 SIGNED {$signature}\n";
-echo "RS384 SIGNED {$signature} " . (BaseSigner::with('rs384')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "RS384 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying RS512
 $signature = BaseSigner::with('rs512')->sign($message);
 echo "RS512 SIGNED {$signature}\n";
-echo "RS512 SIGNED {$signature} " . (BaseSigner::with('rs512')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "RS512 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying ES256
 $signature = BaseSigner::with('es256')->sign($message);
 echo "ES256 SIGNED {$signature}\n";
-echo "ES256 SIGNED {$signature} " . (BaseSigner::with('es256')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "ES256 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying ES384
 $signature = BaseSigner::with('es384')->sign($message);
 echo "ES384 SIGNED {$signature}\n";
-echo "ES384 SIGNED {$signature} " . (BaseSigner::with('es384')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "ES384 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying ES512
 $signature = BaseSigner::with('es512')->sign($message);
 echo "ES512 SIGNED {$signature}\n";
-echo "ES512 SIGNED {$signature} " . (BaseSigner::with('es512')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "ES512 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying PS256
 $signature = BaseSigner::with('ps256')->sign($message);
 echo "PS256 SIGNED {$signature}\n";
-echo "PS256 SIGNED {$signature} " . (BaseSigner::with('ps256')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "PS256 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying PS384
 $signature = BaseSigner::with('ps384')->sign($message);
 echo "PS384 SIGNED {$signature}\n";
-echo "PS384 SIGNED {$signature} " . (BaseSigner::with('ps384')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "PS384 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 // Trying PS512
 $signature = BaseSigner::with('ps512')->sign($message);
 echo "PS512 SIGNED {$signature}\n";
-echo "PS512 SIGNED {$signature} " . (BaseSigner::with('ps512')->validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
+echo "PS512 SIGNED {$signature} " . (BaseSigner::validate($message, $signature) ? "IS VALID" : "ISN'T VALID") . "\n";
 
 
 

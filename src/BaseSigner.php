@@ -20,24 +20,31 @@ abstract class BaseSigner
      *
      * @var string
      */
-    private string $signParam = 'sign';
+    protected static string $signParam = 'sign';
 
     /**
      * The name of expires parameter when signing URL
      *
      * @var string
      */
-    private string $expiresParameter = 'e';
+    protected static string $expiresParameter = 'e';
 
     /**
      * The name of signature parameter when signing URL
      *
      * @var string
      */
-    private string $signatureParameter = 's';
+    protected static string $signatureParameter = 's';
 
     /**
-     * The key for hashing algorithms
+     * The salt for hashing algorithms
+     *
+     * @var string
+     */
+    protected string $salt = '';
+
+    /**
+     * Signature key to identify validator configuration
      *
      * @var string
      */
@@ -63,17 +70,6 @@ abstract class BaseSigner
     }
 
     /**
-     * Create a signer object with provided by file configuration
-     *
-     * @param string $cfg
-     * @return BaseSigner
-     */
-    public static function withConfig(string $cfg): BaseSigner
-    {
-        return SignerFactory::createFromConfig($cfg);
-    }
-
-    /**
      * Sign a input string message
      *
      * @param string $message
@@ -84,10 +80,11 @@ abstract class BaseSigner
      *
      * @param array $config
      */
-    public function __construct(array $config)
+    public function __construct(array $config, string $name)
     {
         $this->config = $config;
-        $this->signatureKey = $this->config['key'] ?? '';
+        $this->salt = $this->config['key'] ?? '';
+        $this->signatureKey = $name;
     }
 
     /**
@@ -109,14 +106,15 @@ abstract class BaseSigner
         /**
          * Generate URL signature
          */
-        $signature = $this->createSignature("{$url}::{$expiration}::{$this->signatureKey}");
+        $signature = $this->createSignature("{$url}::{$expiration}::{$this->salt}");
 
         $query = QueryString::extract($url->getQuery());
         $sign = [
-            $this->expiresParameter => $expiration,
-            $this->signatureParameter => $signature
+            BaseSigner::$expiresParameter => $expiration,
+            BaseSigner::$signatureParameter => $signature,
+            'key' => $this->signatureKey
         ];
-        $signParam = $signParam ?? $this->signParam;
+        $signParam = $signParam ?? BaseSigner::$signParam;
         /**
          * Encode signature and expiration data
          */
@@ -153,26 +151,31 @@ abstract class BaseSigner
      * @param string $signParam
      * @return boolean
      */
-    public function validateUrl(string $url, ?string $signParam = null)
+    public static function validateUrl(string $url, ?string $signParam = null)
     {
-        $this->signParam = $signParam ?? $this->signParam;
+        BaseSigner::$signParam = $signParam ?? BaseSigner::$signParam;
         $url = Http::createFromString($url);
         $query = QueryString::extract($url->getQuery());
         /**
          * Check if there are all required parameters
          */
-        $signParameters = $this->getSignParameters($query);
+        $signParameters = BaseSigner::getSignParameters($query);
         if ($signParameters === null || empty($signParameters)) {
             return false;
         }
-        $expiration = $signParameters[$this->expiresParameter];
-        if (! $this->isFuture($expiration)) {
+        $expiration = $signParameters[BaseSigner::$expiresParameter];
+        if (! BaseSigner::isFuture($expiration)) {
             return false;
         }
-        $query = QueryString::extract($url->getQuery());
-        $providedSignature = $signParameters[$this->signatureParameter];
-        $intendedUrl = $this->getIntendedUrl($url);
-        return $this->hasValidSignature("{$intendedUrl}::{$expiration}::{$this->signatureKey}", $providedSignature);
+        $providedSignature = $signParameters[BaseSigner::$signatureParameter];
+        /**
+         * Create object with correct signer type
+         *
+         * @var \Psr\Http\Message\UriInterface $intendedUrl
+         */
+        $signer = BaseSigner::with($signParameters['key']);
+        $intendedUrl = $signer->getIntendedUrl($url);
+        return $signer->hasValidSignature("{$intendedUrl}::{$expiration}::{$signer->salt}", $providedSignature);
     }
 
     /**
@@ -183,14 +186,14 @@ abstract class BaseSigner
      */
     protected function getSignParameters(array $query): ?array
     {
-        if (! isset($query[$this->signParam])) {
+        if (! isset($query[BaseSigner::$signParam])) {
             return true;
         }
-        $signParameters = QueryString::extract(base64_decode($query[$this->signParam]));
-        if (! isset($signParameters[$this->expiresParameter])) {
+        $signParameters = QueryString::extract(base64_decode($query[BaseSigner::$signParam]));
+        if (! isset($signParameters[BaseSigner::$expiresParameter])) {
             return null;
         }
-        if (! isset($signParameters[$this->signatureParameter])) {
+        if (! isset($signParameters[BaseSigner::$signatureParameter])) {
             return null;
         }
         return $signParameters;
@@ -235,7 +238,7 @@ abstract class BaseSigner
     protected function getIntendedUrl(UriInterface $url)
     {
         $intendedQuery = QueryString::extract($url->getQuery());
-        unset($intendedQuery[$this->signParam]);
+        unset($intendedQuery[BaseSigner::$signParam]);
         return $url->withQuery($this->buildQueryStringFromArray($intendedQuery));
     }
 
@@ -267,7 +270,11 @@ abstract class BaseSigner
         /**
          * Generate message signature
          */
-        return $this->createSignature("{$message}::{$this->signatureKey}");
+        $signature = $this->createSignature("{$message}::{$this->salt}");
+        return base64_encode(http_build_query([
+            'sign' => $signature,
+            'key' => $this->signatureKey
+        ]));
     }
 
     /**
@@ -278,9 +285,18 @@ abstract class BaseSigner
      * @param string $signParam
      * @return boolean
      */
-    public function validate(string $message, string $providedSignature)
+    public static function validate(string $message, string $providedSignature)
     {
-        return $this->hasValidSignature("{$message}::{$this->signatureKey}", $providedSignature, null);
+        $signature = null;
+        parse_str(base64_decode($providedSignature), $signature);
+        if (! isset($signature['key'])) {
+            throw new \Exception('Signature does not contain a KEY field');
+        }
+        if (! isset($signature['sign'])) {
+            throw new \Exception('Signature does not contain a SIGN field');
+        }
+        $signer = BaseSigner::with($signature['key']);
+        return $signer->hasValidSignature("{$message}::{$signer->salt}", $signature['sign'], null);
     }
 }
 
