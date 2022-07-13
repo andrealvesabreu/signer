@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Inspire\Signer;
 
 /**
@@ -17,35 +19,35 @@ class RSSigner extends BaseSigner
      */
     protected function createSignature(string $message): string
     {
-        if (! isset($this->config['pri_file'])) {
+        if (!isset($this->config['pri_file'])) {
             throw new \Exception("Error. You must provide a private key file.");
-        } else if (! file_exists($this->config['pri_file'])) {
+        } else if (!file_exists($this->config['pri_file'])) {
             throw new \Exception("Error. The private key file does not exists.");
         }
         $private_key = file_get_contents($this->config['pri_file']);
         $binary_signature = "";
         switch ($this->config['version']) {
-            /**
+                /**
              * Signing with RS256
              */
             case '256':
                 openssl_sign($message, $binary_signature, $private_key, OPENSSL_ALGO_SHA256);
                 break;
-            /**
-             * Signing with RS384
-             */
+                /**
+                 * Signing with RS384
+                 */
             case '384':
                 openssl_sign($message, $binary_signature, $private_key, OPENSSL_ALGO_SHA384);
                 break;
-            /**
-             * Signing with RS512
-             */
+                /**
+                 * Signing with RS512
+                 */
             case '512':
                 openssl_sign($message, $binary_signature, $private_key, OPENSSL_ALGO_SHA512);
                 break;
-            /**
-             * Invalid algorithm
-             */
+                /**
+                 * Invalid algorithm
+                 */
             default:
                 throw new \Exception("Error. Invalid RS algorithm. {$this->algorithm} is not a valid RS{256,384,512}.");
         }
@@ -61,36 +63,35 @@ class RSSigner extends BaseSigner
      */
     protected function hasValidSignature(string $message, string $providedSignature): bool
     {
-        if (! preg_match('%^[a-zA-Z0-9/+]*={0,2}$%', $providedSignature)) {
+        if (!preg_match('%^[a-zA-Z0-9/+]*={0,2}$%', $providedSignature)) {
             throw new \Exception("Error. Invalid signature format.");
-        } else if (! isset($this->config['pub_file'])) {
+        } else if (!isset($this->config['pub_file'])) {
             throw new \Exception("Error. You must provide a private key file.");
-        } else if (! file_exists($this->config['pub_file'])) {
+        } else if (!file_exists($this->config['pub_file'])) {
             throw new \Exception("Error. The private key file does not exists.");
         }
         $public_key = file_get_contents($this->config['pub_file']);
         switch ($this->config['version']) {
-            /**
+                /**
              * Checking RS256 signature
              */
             case '256':
                 return openssl_verify($message, base64_decode($providedSignature), $public_key, OPENSSL_ALGO_SHA256) == 1;
-            /**
-             * Checking RS384 signature
-             */
+                /**
+                 * Checking RS384 signature
+                 */
             case '384':
                 return openssl_verify($message, base64_decode($providedSignature), $public_key, OPENSSL_ALGO_SHA384) == 1;
-            /**
-             * Checking RS512 signature
-             */
+                /**
+                 * Checking RS512 signature
+                 */
             case '512':
                 return openssl_verify($message, base64_decode($providedSignature), $public_key, OPENSSL_ALGO_SHA512) == 1;
-            /**
-             * Invalid algorithm
-             */
+                /**
+                 * Invalid algorithm
+                 */
             default:
                 throw new \Exception("Error. Invalid RS algorithm. {$this->algorithm} is not a valid RS{256,384,512}.");
         }
     }
-}  
-    
+}

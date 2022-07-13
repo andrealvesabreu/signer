@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Inspire\Signer;
 
 use League\Uri\QueryString;
@@ -8,7 +10,7 @@ use League\Uri\Http;
 use Inspire\Signer\Factories\SignerFactory;
 
 /**
- * Description of MD5Signer
+ * Description of BaseSigner
  *
  * @author aalves
  */
@@ -118,7 +120,8 @@ abstract class BaseSigner
         /**
          * Encode signature and expiration data
          */
-        $query[$signParam] = rtrim(base64_encode($this->buildQueryStringFromArray($sign)), '=');
+        // $query[$signParam] = rtrim(base64_encode($this->buildQueryStringFromArray($sign)), '=');
+        $query[$signParam] = rtrim(base64_encode(json_encode($sign)), '=');
         /**
          * Compile URL
          */
@@ -164,7 +167,7 @@ abstract class BaseSigner
             return false;
         }
         $expiration = $signParameters[BaseSigner::$expiresParameter];
-        if (! BaseSigner::isFuture($expiration)) {
+        if (!BaseSigner::isFuture($expiration)) {
             return false;
         }
         $providedSignature = $signParameters[BaseSigner::$signatureParameter];
@@ -184,16 +187,20 @@ abstract class BaseSigner
      * @param array $query
      * @return bool
      */
-    protected function getSignParameters(array $query): ?array
+    protected static function getSignParameters(array $query): ?array
     {
-        if (! isset($query[BaseSigner::$signParam])) {
+        if (!isset($query[BaseSigner::$signParam])) {
             return true;
         }
-        $signParameters = QueryString::extract(base64_decode($query[BaseSigner::$signParam]));
-        if (! isset($signParameters[BaseSigner::$expiresParameter])) {
+        // $signParameters = QueryString::extract(base64_decode($query[BaseSigner::$signParam]));
+        $signParameters = json_decode(base64_decode($query[BaseSigner::$signParam]), true);
+        if (json_last_error() != JSON_ERROR_NONE) {
             return null;
         }
-        if (! isset($signParameters[BaseSigner::$signatureParameter])) {
+        if (!isset($signParameters[BaseSigner::$expiresParameter])) {
+            return null;
+        }
+        if (!isset($signParameters[BaseSigner::$signatureParameter])) {
             return null;
         }
         return $signParameters;
@@ -222,7 +229,7 @@ abstract class BaseSigner
         } else {
             throw new \Exception('Expiration date must be an instance of DateTime or an integer');
         }
-        if (! $this->isFuture($expiration)) {
+        if (!BaseSigner::isFuture($expiration)) {
             throw new \Exception('Expiration date must be in the future');
         }
         return (string) $expiration;
@@ -249,7 +256,7 @@ abstract class BaseSigner
      *
      * @return bool
      */
-    protected function isFuture($timestamp)
+    protected static function isFuture($timestamp)
     {
         return ((int) $timestamp) >= time();
     }
@@ -289,14 +296,13 @@ abstract class BaseSigner
     {
         $signature = null;
         parse_str(base64_decode($providedSignature), $signature);
-        if (! isset($signature['key'])) {
+        if (!isset($signature['key'])) {
             throw new \Exception('Signature does not contain a KEY field');
         }
-        if (! isset($signature['sign'])) {
+        if (!isset($signature['sign'])) {
             throw new \Exception('Signature does not contain a SIGN field');
         }
         $signer = BaseSigner::with($signature['key']);
         return $signer->hasValidSignature("{$message}::{$signer->salt}", $signature['sign'], null);
     }
 }
-

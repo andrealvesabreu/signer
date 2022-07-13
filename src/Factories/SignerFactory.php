@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Inspire\Signer\Factories;
 
 use Inspire\Config\Config;
@@ -72,11 +74,10 @@ final class SignerFactory
         $algFamily = strtoupper($exists['name']);
         $className = self::$signers[$algFamily] ?? null;
         $class = "\\Inspire\\Signer\\{$className}Signer";
-        if (! class_exists($class)) {
+        if (!class_exists($class)) {
             throw new \Exception("Error. {$class} signer does not exists.");
         }
         self::$instances[$name] = new $class($exists, $name);
         return self::$instances[$name];
     }
 }
-

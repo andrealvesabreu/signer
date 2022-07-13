@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Inspire\Signer;
 
 /**
@@ -21,7 +23,7 @@ class SHASigner extends BaseSigner
             throw new \Exception("Error. You must provide a signature key if you are using a signature without certificate.");
         }
         switch ($this->config['version']) {
-            /**
+                /**
              * Hashing with SHA algorithms
              */
             case '1':
@@ -29,9 +31,9 @@ class SHASigner extends BaseSigner
             case '384':
             case '512':
                 return hash("sha{$this->config['version']}", $message);
-            /**
-             * Invalid algorithm
-             */
+                /**
+                 * Invalid algorithm
+                 */
             default:
                 throw new \Exception("Error. Invalid SHA algorithm. {$this->config['version']} is not a valid SHA.");
         }
@@ -49,5 +51,4 @@ class SHASigner extends BaseSigner
         $validSignature = $this->createSignature($message);
         return hash_equals($validSignature, $providedSignature);
     }
-}  
-    
+}
