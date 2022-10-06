@@ -21,27 +21,28 @@ final class SignerFactory
      *
      * @var array
      */
-    private static $signers = [
-        'MD2' => 'MD',
-        'MD4' => 'MD',
-        'MD5' => 'MD',
-        'SHA1' => 'SHA',
-        'SHA256' => 'SHA',
-        'SHA384' => 'SHA',
-        'SHA512' => 'SHA',
-        'HS256' => 'HS',
-        'HS384' => 'HS',
-        'HS512' => 'HS',
-        'RS256' => 'RS',
-        'RS384' => 'RS',
-        'RS512' => 'RS',
-        'ES256' => 'ES',
-        'ES384' => 'ES',
-        'ES512' => 'ES',
-        'PS256' => 'PS',
-        'PS384' => 'PS',
-        'PS512' => 'PS'
-    ];
+    private static $signers = ['MD', 'SHA', 'HS', 'RS', 'ES', 'PS'];
+    // private static $signers = [
+    //     'MD2' => 'MD',
+    //     'MD4' => 'MD',
+    //     'MD5' => 'MD',
+    //     'SHA1' => 'SHA',
+    //     'SHA256' => 'SHA',
+    //     'SHA384' => 'SHA',
+    //     'SHA512' => 'SHA',
+    //     'HS256' => 'HS',
+    //     'HS384' => 'HS',
+    //     'HS512' => 'HS',
+    //     'RS256' => 'RS',
+    //     'RS384' => 'RS',
+    //     'RS512' => 'RS',
+    //     'ES256' => 'ES',
+    //     'ES384' => 'ES',
+    //     'ES512' => 'ES',
+    //     'PS256' => 'PS',
+    //     'PS384' => 'PS',
+    //     'PS512' => 'PS'
+    // ];
 
     /**
      * Create a signer object based on first argument that say what is the algorithm to use
@@ -71,12 +72,11 @@ final class SignerFactory
             }
             $exists = Config::get("signer.{$name}");
         }
-        $algFamily = strtoupper($exists['name']);
-        $className = self::$signers[$algFamily] ?? null;
-        $class = "\\Inspire\\Signer\\{$className}Signer";
-        if (!class_exists($class)) {
-            throw new \Exception("Error. {$class} signer does not exists.");
+        $algFamily = strtoupper($exists['alg']);
+        if (!in_array($algFamily, self::$signers)) {
+            throw new \Exception("Error. Algorithm {$algFamily} does not exists.");
         }
+        $class = "\\Inspire\\Signer\\{$algFamily}Signer";
         self::$instances[$name] = new $class($exists, $name);
         return self::$instances[$name];
     }
