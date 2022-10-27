@@ -22,28 +22,7 @@ final class SignerFactory
      * @var array
      */
     private static $signers = ['MD', 'SHA', 'HS', 'RS', 'ES', 'PS'];
-    // private static $signers = [
-    //     'MD2' => 'MD',
-    //     'MD4' => 'MD',
-    //     'MD5' => 'MD',
-    //     'SHA1' => 'SHA',
-    //     'SHA256' => 'SHA',
-    //     'SHA384' => 'SHA',
-    //     'SHA512' => 'SHA',
-    //     'HS256' => 'HS',
-    //     'HS384' => 'HS',
-    //     'HS512' => 'HS',
-    //     'RS256' => 'RS',
-    //     'RS384' => 'RS',
-    //     'RS512' => 'RS',
-    //     'ES256' => 'ES',
-    //     'ES384' => 'ES',
-    //     'ES512' => 'ES',
-    //     'PS256' => 'PS',
-    //     'PS384' => 'PS',
-    //     'PS512' => 'PS'
-    // ];
-
+    
     /**
      * Create a signer object based on first argument that say what is the algorithm to use
      *
